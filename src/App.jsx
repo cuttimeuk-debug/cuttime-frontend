@@ -2,60 +2,89 @@ import React from "react";
 
 function CuttimeStarterApp() {
   return (
-    <div style={{ 
-      backgroundColor: "#0a0a0a", 
-      minHeight: "100vh", 
-      color: "#9AD8FF", 
-      fontFamily: "Arial, sans-serif", 
-      padding: "2rem" 
+    <div style={{
+      background: "linear-gradient(180deg, #0a0a0a, #001a33)",
+      minHeight: "100vh",
+      color: "#f0f8ff",
+      fontFamily: "Arial, sans-serif",
+      padding: "2rem"
     }}>
-      <header style={{ marginBottom: "2rem", textAlign: "center" }}>
-        <h1 style={{ fontSize: "3rem", margin: 0 }}>✂️ Cuttime</h1>
-        <p style={{ color: "#ccc", marginTop: "0.5rem" }}>
+      {/* Header */}
+      <header style={{ textAlign: "center", marginBottom: "3rem" }}>
+        <h1 style={{ fontSize: "3.5rem", margin: 0 }}>✂️ Cuttime</h1>
+        <p style={{ fontSize: "1.25rem", color: "#9AD8FF", marginTop: "0.5rem" }}>
           Smart queues for barbers & customers
         </p>
       </header>
 
-      <main style={{ maxWidth: "600px", margin: "0 auto" }}>
-        <section style={{ background: "#111", padding: "1.5rem", borderRadius: "12px", marginBottom: "2rem" }}>
-          <h2 style={{ color: "#9AD8FF" }}>Pro (per barber)</h2>
-          <p style={{ fontSize: "2rem", fontWeight: "bold", margin: "0.5rem 0" }}>
-            £20<span style={{ fontSize: "1rem", color: "#9AD8FF" }}>/mo</span>
+      {/* Main content */}
+      <main style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
+        {/* Barbers Section */}
+        <section style={{
+          background: "#111",
+          padding: "2rem",
+          borderRadius: "12px",
+          width: "300px",
+          textAlign: "center",
+          boxShadow: "0 4px 8px rgba(0,0,0,0.5)"
+        }}>
+          <h2 style={{ color: "#9AD8FF" }}>For Barbers</h2>
+          <p>Manage queues, let customers know your wait times, and grow your shop.</p>
+          <p style={{ fontSize: "2rem", fontWeight: "bold", margin: "1rem 0" }}>
+            £20<span style={{ fontSize: "1rem" }}>/mo</span>
           </p>
-          <ul style={{ color: "#ccc" }}>
-            <li>Per-barber billing (£20/mo each)</li>
-            <li>Per-barber queues & ETAs</li>
-            <li>"Available now" & Day Off</li>
-            <li>Realtime updates</li>
-          </ul>
-          <a 
-            href="https://buy.stripe.com/test_XXXXXX" 
-            style={{ 
-              display: "inline-block", 
-              background: "#0066FF", 
-              color: "white", 
-              padding: "0.75rem 1.5rem", 
-              borderRadius: "8px", 
-              textDecoration: "none", 
-              marginTop: "1rem" 
+          <a
+            href="#"
+            style={{
+              display: "inline-block",
+              background: "#0066FF",
+              color: "white",
+              padding: "0.75rem 1.5rem",
+              borderRadius: "8px",
+              textDecoration: "none",
+              marginTop: "1rem"
             }}
           >
-            Subscribe £20/mo
+            Sign Up
           </a>
         </section>
 
-        <section style={{ background: "#111", padding: "1.5rem", borderRadius: "12px" }}>
-          <h3 style={{ color: "#9AD8FF" }}>Next steps</h3>
-          <ul style={{ color: "#ccc" }}>
-            <li>Replace Payment Link with your live Stripe URL (set £20/mo, GBP)</li>
-            <li>Connect to backend for real auth and per-barber seat counts</li>
-            <li>Auto-enforce billing: only paid barbers can use the dashboard</li>
-          </ul>
+        {/* Customers Section */}
+        <section style={{
+          background: "#111",
+          padding: "2rem",
+          borderRadius: "12px",
+          width: "300px",
+          textAlign: "center",
+          boxShadow: "0 4px 8px rgba(0,0,0,0.5)"
+        }}>
+          <h2 style={{ color: "#9AD8FF" }}>For Customers</h2>
+          <p>See how many people are waiting for your barber and the next available time.</p>
+          <a
+            href="#"
+            style={{
+              display: "inline-block",
+              background: "#00CC66",
+              color: "white",
+              padding: "0.75rem 1.5rem",
+              borderRadius: "8px",
+              textDecoration: "none",
+              marginTop: "2rem"
+            }}
+          >
+            Find a Barber
+          </a>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer style={{ textAlign: "center", marginTop: "4rem", color: "#777" }}>
+        © {new Date().getFullYear()} Cuttime. All rights reserved.
+      </footer>
     </div>
   );
 }
 
 export default CuttimeStarterApp;
-REPLACE_WITH_APP_CODE
+
+
