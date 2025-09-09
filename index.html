@@ -1,14 +1,448 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" 
-/>
-    <title>Cuttime</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2299.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">import React, { useEffect, useMemo, useState } from "react";</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">/**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* Cuttime – Starter Webapp</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* - Theme: black + electric blue</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* - Logo included (inline SVG)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* - Barber signup/login (localStorage auth for demo)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* - Pricing + Payments (Stripe Payment Link ready)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* - Customer View (public) placeholder</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>*</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* How to use:</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* 1) Drop this file into your React app (or preview in the canvas).</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* 2) Set STRIPE_PAYMENT_LINK below (Payment Links or Checkout URL).</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* 3) Click "Subscribe" after sign-up to test the flow.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>*</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>* Later: swap localStorage auth for real backend (Next.js/Express) &amp; Stripe Checkout Sessions.</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>*/</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_XXXXXXXX"; // &lt;-- replace with your Stripe Payment Link</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">export default function CuttimeStarterApp() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [view, setView] = useState("home"); // home | login | signup | dashboard | customer</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [auth, setAuth] = useState(() =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>try { return JSON.parse(localStorage.getItem("ct_auth") || "null"); } catch { return null; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>useEffect(() =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.documentElement.classList.add("h-full");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.body.classList.add("h-full", "m-0");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}, []);</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function onLogin(email, password) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const users = JSON.parse(localStorage.getItem("ct_users") || "[]");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const user = users.find((u) =&gt; u.email === email &amp;&amp; u.password === password);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!user) throw new Error("Invalid credentials");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>localStorage.setItem("ct_auth", JSON.stringify(user));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setAuth(user);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setView("dashboard");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function onSignup(payload) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const users = JSON.parse(localStorage.getItem("ct_users") || "[]");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (users.some((u) =&gt; u.email === payload.email)) throw new Error("Email already exists");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const user = { id: Date.now(), ...payload, subscribed: false };</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>users.push(user);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>localStorage.setItem("ct_users", JSON.stringify(users));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>localStorage.setItem("ct_auth", JSON.stringify(user));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setAuth(user);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setView("dashboard");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function logout() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>localStorage.removeItem("ct_auth");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setAuth(null);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setView("home");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>function markSubscribed() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!auth) return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const users = JSON.parse(localStorage.getItem("ct_users") || "[]");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const updated = users.map((u) =&gt; (u.id === auth.id ? { ...u, subscribed: true } : u));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>localStorage.setItem("ct_users", JSON.stringify(updated));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const me = updated.find((u) =&gt; u.id === auth.id);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>localStorage.setItem("ct_auth", JSON.stringify(me));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setAuth(me);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div style={styles.app}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;NavBar auth={auth} setView={setView} onLogout={logout} /&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{view === "home" &amp;&amp; &lt;Hero setView={setView} /&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{view === "customer" &amp;&amp; &lt;CustomerPreview /&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{view === "login" &amp;&amp; &lt;LoginForm onSubmit={onLogin} /&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{view === "signup" &amp;&amp; &lt;SignupForm onSubmit={onSignup} /&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{view === "dashboard" &amp;&amp; auth &amp;&amp; (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;Dashboard auth={auth} onSubscribe={markSubscribed} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>)}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;Footer /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">/* ---------------- UI Components ---------------- */</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function Logo({ size = 28, withWord = true }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div style={{ display: "flex", alignItems: "center", gap: 10 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;circle cx="32" cy="32" r="30" stroke="#56CCF2" strokeWidth="4" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{/* clock hands */}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;line x1="32" y1="32" x2="32" y2="18" stroke="#56CCF2" strokeWidth="3" strokeLinecap="round" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;line x1="32" y1="32" x2="44" y2="32" stroke="#56CCF2" strokeWidth="3" strokeLinecap="round" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{/* scissor handle dots */}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;circle cx="22" cy="46" r="4" stroke="#56CCF2" strokeWidth="3" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;circle cx="42" cy="46" r="4" stroke="#56CCF2" strokeWidth="3" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{/* scissor blades */}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;line x1="28" y1="40" x2="12" y2="24" stroke="#56CCF2" strokeWidth="3" strokeLinecap="round" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;line x1="36" y1="40" x2="52" y2="24" stroke="#56CCF2" strokeWidth="3" strokeLinecap="round" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/svg&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{withWord &amp;&amp; &lt;span style={{ color: "#E6F7FF", fontWeight: 800, fontSize: 22, letterSpacing: 0.5 }}&gt;Cuttime&lt;/span&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function NavBar({ auth, setView, onLogout }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div style={styles.nav}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div onClick={() =&gt; setView("home")} style={{ cursor: "pointer" }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;Logo size={26} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={{ display: "flex", gap: 10 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;NavButton onClick={() =&gt; setView("customer")}&gt;Customer View&lt;/NavButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{!auth &amp;&amp; &lt;NavButton onClick={() =&gt; setView("login")}&gt;Login&lt;/NavButton&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{!auth &amp;&amp; &lt;NavButton onClick={() =&gt; setView("signup")} variant="primary"&gt;Get Started&lt;/NavButton&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{auth &amp;&amp; &lt;NavButton onClick={() =&gt; setView("dashboard")} variant="primary"&gt;Dashboard&lt;/NavButton&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{auth &amp;&amp; &lt;NavButton onClick={onLogout}&gt;Logout&lt;/NavButton&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function Hero({ setView }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section style={styles.hero}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;Logo size={48} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h1 style={styles.h1}&gt;No more waiting at the barbers.&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;p style={styles.lead}&gt;Live queues, "Available now" badges, and per-barber ETAs. Built for walk-ins.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={{ display: "flex", gap: 12, marginTop: 18 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;CTAButton onClick={() =&gt; setView("signup")}&gt;Get Started&lt;/CTAButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;GhostButton onClick={() =&gt; setView("customer")}&gt;See Customer View&lt;/GhostButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;PricingCard onClick={() =&gt; setView("signup")} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function PricingCard({ onClick }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div style={styles.pricingCard}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h3 style={{ margin: 0, color: "#E6F7FF" }}&gt;Pro (per barber)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;p style={{ margin: "6px 0", color: "#9AD8FF" }}&gt;Everything you need for walk-ins&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={{ fontSize: 32, fontWeight: 800, color: "#56CCF2" }}&gt;£20&lt;span style={{ fontSize: 16, color: "#9AD8FF" }}&gt;/mo&lt;/span&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;ul style={styles.list}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;li&gt;Per-barber billing (£20/mo each)&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;li&gt;Per-barber queues &amp; ETAs&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;li&gt;"Available now" &amp; Day Off&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;li&gt;Realtime updates&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;CTAButton onClick={onClick}&gt;Subscribe £20/mo&lt;/CTAButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function LoginForm({ onSubmit }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [email, setEmail] = useState("");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [password, setPassword] = useState("");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [err, setErr] = useState("");</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section style={styles.authCard}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;Logo size={36} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h2 style={styles.h2}&gt;Barber Login&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;input style={styles.input} placeholder="Email" value={email} onChange={(e) =&gt; setEmail(e.target.value)} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;input style={styles.input} type="password" placeholder="Password" value={password} onChange={(e) =&gt; setPassword(e.target.value)} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{err &amp;&amp; &lt;div style={styles.err}&gt;{err}&lt;/div&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;CTAButton onClick={() =&gt; { try { onSubmit(email, password); } catch(e) { setErr(e.message); } }}&gt;Login&lt;/CTAButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function SignupForm({ onSubmit }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [shop, setShop] = useState("");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [name, setName] = useState("");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [email, setEmail] = useState("");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [password, setPassword] = useState("");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [err, setErr] = useState("");</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section style={styles.authCard}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;Logo size={36} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h2 style={styles.h2}&gt;Create your shop account&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;input style={styles.input} placeholder="Shop name" value={shop} onChange={(e) =&gt; setShop(e.target.value)} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;input style={styles.input} placeholder="Your display name" value={name} onChange={(e) =&gt; setName(e.target.value)} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;input style={styles.input} placeholder="Email" value={email} onChange={(e) =&gt; setEmail(e.target.value)} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;input style={styles.input} type="password" placeholder="Password" value={password} onChange={(e) =&gt; setPassword(e.target.value)} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{err &amp;&amp; &lt;div style={styles.err}&gt;{err}&lt;/div&gt;}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;CTAButton onClick={() =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>if (!shop || !name || !email || !password) { setErr("Please fill all fields"); return; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>try { onSubmit({ shop, name, email, password }); } catch(e) { setErr(e.message); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}}&gt;Create Account&lt;/CTAButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function Dashboard({ auth, onSubscribe }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section style={styles.dashboard}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;h2 style={styles.h2}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>Welcome, &lt;span style={{ color: "#56CCF2" }}&gt;{auth.name || "Barber"}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;p style={{ color: "#9AD8FF", marginTop: 6 }}&gt;Shop: {auth.shop}&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;Logo size={40} withWord={false} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={styles.cardRow}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div style={styles.card}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;h3 style={styles.cardTitle}&gt;Subscription&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;p style={styles.cardText}&gt;{auth.subscribed ? "Active – Thank you!" : "Not active"}&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>{!auth.subscribed ? (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div style={{ display: "flex", gap: 12 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;a href={STRIPE_PAYMENT_LINK} target="_blank" rel="noreferrer"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;CTAButton&gt;Subscribe £20/mo&lt;/CTAButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;/a&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;GhostButton onClick={onSubscribe}&gt;Mark as Subscribed (demo)&lt;/GhostButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>) : (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span style={styles.badge}&gt;PRO&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>)}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div style={styles.card}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;h3 style={styles.cardTitle}&gt;Services&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;p style={styles.cardText}&gt;Add Haircut (30m), Beard Trim (20m), Both (45m) and your own timings.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;GhostButton onClick={() =&gt; alert("Service manager coming next – hook to backend.")}&gt;Manage Services&lt;/GhostButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div style={styles.card}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;h3 style={styles.cardTitle}&gt;Queue&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;p style={styles.cardText}&gt;Use +1 to add walk-ins, toggle Day Off, and finish current.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;GhostButton onClick={() =&gt; alert("Queue dashboard coming next – hook to backend.")}&gt;Open Queue&lt;/GhostButton&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={{ marginTop: 24 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;h3 style={styles.cardTitle}&gt;Next steps&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;ul style={styles.list}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;li&gt;Replace Payment Link with your live Stripe URL (set £20/mo, GBP)&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;li&gt;Connect to backend for real auth and per-barber seat counts&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;li&gt;Auto-enforce billing: only paid barbers can use the dashboard&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function CustomerPreview() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const rows = [</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ name: "Barber 1", waiting: 0, total: 0, off: false },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ name: "Barber 2", waiting: 2, total: 50, off: false },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{ name: "Barber 3", waiting: 0, total: 0, off: true },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>];</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;section style={styles.customer}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h2 style={styles.h2}&gt;Live Queue&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={{ display: "grid", gap: 12 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{rows.map((b, i) =&gt; (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div key={i} style={{ ...styles.row, opacity: b.off ? 0.6 : 1 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div style={styles.rowLeft}&gt;{b.name}&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div style={styles.rowMid}&gt;{b.waiting} waiting {b.waiting ? &lt;span style={{ color: "#9AD8FF" }}&gt; · ~{b.total} mins&lt;/span&gt; : null}&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div style={styles.rowRight}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>{b.off ? (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span style={badge("#FCA5A5", "#7F1D1D")}&gt;Off today&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>) : b.waiting === 0 ? (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span style={badge("#A7F3D0", "#064E3B")}&gt;Available now&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>) : (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span&gt;Next: 14:30&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>)}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>))}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function Footer() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;footer style={styles.footer}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={{ opacity: 0.9 }}&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;Logo size={20} /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style={{ color: "#9AD8FF" }}&gt;© {new Date().getFullYear()} Cuttime. All rights reserved.&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/footer&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">/* ---------------- Style System ---------------- */</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">const styles = {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>app: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>minHeight: "100vh",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: "linear-gradient(180deg, #0B1020 0%, #060913 80%)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: "#E6F7FF",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: "flex",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>flexDirection: "column",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>nav: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: "flex",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>alignItems: "center",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>justifyContent: "space-between",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: "14px 18px",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>borderBottom: "1px solid rgba(86,204,242,0.15)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>position: "sticky",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>top: 0,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>backdropFilter: "blur(6px)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: "rgba(6,9,19,0.6)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>zIndex: 10,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>hero: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 24,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>maxWidth: 980,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin: "24px auto",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>textAlign: "center",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>h1: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin: "16px 0 8px",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>fontSize: 40,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>lineHeight: 1.1,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>h2: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin: "8px 0 8px",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>fontSize: 24,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>lead: { color: "#9AD8FF", maxWidth: 720, margin: "0 auto" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>pricingCard: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin: "32px auto 0",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>maxWidth: 420,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: "1px solid rgba(86,204,242,0.2)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>borderRadius: 16,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 18,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: "linear-gradient(180deg, rgba(13,25,43,0.7), rgba(8,14,26,0.9))",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>boxShadow: "0 10px 30px rgba(0,0,0,0.35)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>authCard: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin: "24px auto",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>maxWidth: 520,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: "1px solid rgba(86,204,242,0.2)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>borderRadius: 16,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 18,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: "linear-gradient(180deg, rgba(13,25,43,0.6), rgba(8,14,26,0.85))",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>input: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>width: "100%",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: "12px 14px",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>borderRadius: 10,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: "1px solid rgba(86,204,242,0.25)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: "#0D1A2B",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: "#E6F7FF",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>outline: "none",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin: "6px 0",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>err: { color: "#FCA5A5", background: "#2A0F16", borderRadius: 8, padding: "8px 10px", width: "100%", margin: "4px 0 8px" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>dashboard: { maxWidth: 1000, margin: "24px auto", padding: 18 },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cardRow: { display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>card: {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: "1px solid rgba(86,204,242,0.2)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>borderRadius: 16,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 16,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: "linear-gradient(180deg, rgba(13,25,43,0.6), rgba(8,14,26,0.85))",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>minHeight: 140,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cardTitle: { margin: 0, fontWeight: 700, color: "#E6F7FF" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cardText: { color: "#9AD8FF" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>badge: { background: "#A7F3D0", color: "#064E3B", fontWeight: 700, padding: "6px 10px", borderRadius: 999, display: "inline-block" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>customer: { maxWidth: 900, margin: "24px auto", padding: 18 },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>row: { display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, alignItems: "center", padding: "10px 0", borderBottom: "1px solid rgba(86,204,242,0.15)" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>rowLeft: { fontWeight: 700 },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>rowMid: { color: "#E6F7FF" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>rowRight: { justifySelf: "end" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>footer: { marginTop: "auto", padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(86,204,242,0.15)" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>list: { color: "#CDEFFF", lineHeight: 1.8 },</span></p>
+<p class="p1"><span class="s1">};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function NavButton({ children, onClick, variant }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const base = {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: "10px 14px",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>borderRadius: 12,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>cursor: "pointer",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: "1px solid rgba(86,204,242,0.25)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: variant === "primary" ? "linear-gradient(180deg, #1F3A8A, #13244F)" : "#0D1A2B",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: "#E6F7FF",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>boxShadow: variant === "primary" ? "0 8px 20px rgba(19,36,79,0.6)" : "none",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return &lt;button onClick={onClick} style={base}&gt;{children}&lt;/button&gt;;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function CTAButton({ children, onClick }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;button onClick={onClick} style={{</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: "12px 18px",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>borderRadius: 14,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: "1px solid rgba(86,204,242,0.3)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: "linear-gradient(180deg, #2563EB, #0EA5E9)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: "#E6F7FF",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>fontWeight: 800,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>letterSpacing: 0.3,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>boxShadow: "0 10px 25px rgba(14,165,233,0.35)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>cursor: "pointer",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}}&gt;{children}&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function GhostButton({ children, onClick }) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;button onClick={onClick} style={{</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>padding: "12px 18px",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>borderRadius: 14,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: "1px solid rgba(86,204,242,0.3)",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: "transparent",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>color: "#9AD8FF",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>cursor: "pointer",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}}&gt;{children}&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function badge(bg, fg) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: bg,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: fg,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: "6px 10px",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>borderRadius: 999,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>fontWeight: 800,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+</body>
 </html>
-

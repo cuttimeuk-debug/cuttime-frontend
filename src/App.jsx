@@ -1,100 +1,93 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-function CuttimeStarterApp() {
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_XXXXXXXX"; // <-- replace with your Stripe Payment Link
+
+export default function CuttimeStarterApp() {
+  const [view, setView] = useState("home"); // home | login | signup | dashboard | customer
+  const [auth, setAuth] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("ct_auth") || "null"); } catch { return null; }
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.add("h-full");
+    document.body.classList.add("h-full", "m-0");
+  }, []);
+
+  function onLogin(email, password) {
+    const users = JSON.parse(localStorage.getItem("ct_users") || "[]");
+    const user = users.find((u) => u.email === email && u.password === password);
+    if (!user) throw new Error("Invalid credentials");
+    localStorage.setItem("ct_auth", JSON.stringify(user));
+    setAuth(user);
+    setView("dashboard");
+  }
+
+  function onSignup(payload) {
+    const users = JSON.parse(localStorage.getItem("ct_users") || "[]");
+    if (users.some((u) => u.email === payload.email)) throw new Error("Email already exists");
+    const user = { id: Date.now(), ...payload, subscribed: false };
+    users.push(user);
+    localStorage.setItem("ct_users", JSON.stringify(users));
+    localStorage.setItem("ct_auth", JSON.stringify(user));
+    setAuth(user);
+    setView("dashboard");
+  }
+
+  function logout() {
+    localStorage.removeItem("ct_auth");
+    setAuth(null);
+    setView("home");
+  }
+
+  function markSubscribed() {
+    if (!auth) return;
+    const users = JSON.parse(localStorage.getItem("ct_users") || "[]");
+    const updated = users.map((u) => (u.id === auth.id ? { ...u, subscribed: true } : u));
+    localStorage.setItem("ct_users", JSON.stringify(updated));
+    const me = updated.find((u) => u.id === auth.id);
+    localStorage.setItem("ct_auth", JSON.stringify(me));
+    setAuth(me);
+  }
+
   return (
-    <div style={{
-      background: "linear-gradient(180deg, #0a0a0a, #001a33)",
-      minHeight: "100vh",
-      color: "#f0f8ff",
-      fontFamily: "Arial, sans-serif",
-      padding: "2rem"
-    }}>
-      {/* Header */}
-     <header style={{ marginBottom: "3rem", textAlign: "center" }}>
-  <img
-    src="logo.png"   // change to "/logo.png" if that's your file
-    alt="Cuttime"
-    style={{
-      height: 64,
-      width: "auto",
-      display: "block",
-      margin: "0 auto 0.5rem"
-    }}
-  />
-  <p style={{ fontSize: "1.1rem", color: "#9AD8FF", marginTop: "0.5rem" }}>
-    Smart queues for barbers & customers
-  </p>
-</header>
+    <div style={styles.app}>
+      <NavBar auth={auth} setView={setView} onLogout={logout} />
 
+      {view === "home" && <Hero setView={setView} />}
+      {view === "customer" && <CustomerPreview />}
+      {view === "login" && <LoginForm onSubmit={onLogin} />}
+      {view === "signup" && <SignupForm onSubmit={onSignup} />}
+      {view === "dashboard" && auth && (
+        <Dashboard auth={auth} onSubscribe={markSubscribed} />
+      )}
 
-      {/* Main content */}
-      <main style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
-        {/* Barbers Section */}
-        <section style={{
-          background: "#111",
-          padding: "2rem",
-          borderRadius: "12px",
-          width: "300px",
-          textAlign: "center",
-          boxShadow: "0 4px 8px rgba(0,0,0,0.5)"
-        }}>
-          <h2 style={{ color: "#9AD8FF" }}>For Barbers</h2>
-          <p>Manage queues, let customers know your wait times, and grow your shop.</p>
-          <p style={{ fontSize: "2rem", fontWeight: "bold", margin: "1rem 0" }}>
-            £20<span style={{ fontSize: "1rem" }}>/mo</span>
-          </p>
-          <a
-            href="#"
-            style={{
-              display: "inline-block",
-              background: "#0066FF",
-              color: "white",
-              padding: "0.75rem 1.5rem",
-              borderRadius: "8px",
-              textDecoration: "none",
-              marginTop: "1rem"
-            }}
-          >
-            Sign Up
-          </a>
-        </section>
-
-        {/* Customers Section */}
-        <section style={{
-          background: "#111",
-          padding: "2rem",
-          borderRadius: "12px",
-          width: "300px",
-          textAlign: "center",
-          boxShadow: "0 4px 8px rgba(0,0,0,0.5)"
-        }}>
-          <h2 style={{ color: "#9AD8FF" }}>For Customers</h2>
-          <p>See how many people are waiting for your barber and the next available time.</p>
-          <a
-            href="#"
-            style={{
-              display: "inline-block",
-              background: "#00CC66",
-              color: "white",
-              padding: "0.75rem 1.5rem",
-              borderRadius: "8px",
-              textDecoration: "none",
-              marginTop: "2rem"
-            }}
-          >
-            Find a Barber
-          </a>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer style={{ textAlign: "center", marginTop: "4rem", color: "#777" }}>
-        © {new Date().getFullYear()} Cuttime. All rights reserved.
-      </footer>
+      <Footer />
     </div>
   );
 }
 
-export default CuttimeStarterApp;
+/* ---------------- UI Components ---------------- */
 
+function Logo({ size = 28, withWord = true }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <img
+        src="/logo.png"
+        alt="Cuttime"
+        style={{ height: size, width: "auto" }}
+      />
+      {withWord && (
+        <span style={{
+          color: "#E6F7FF",
+          fontWeight: 800,
+          fontSize: 22,
+          letterSpacing: 0.5
+        }}>
+          Cuttime
+        </span>
+      )}
+    </div>
+  );
+}
 
+/* keep the rest of the components (NavBar, Hero, PricingCard, LoginForm, SignupForm, Dashboard, CustomerPreview, Footer, styles, NavButton, CTAButton, GhostButton, badge) the same as in the prototype you pasted — just replacing Logo with this external-image version */
