@@ -10,12 +10,22 @@ function CuttimeStarterApp() {
       padding: "2rem"
     }}>
       {/* Header */}
-      <header style={{ textAlign: "center", marginBottom: "3rem" }}>
-        <h1 style={{ fontSize: "3.5rem", margin: 0 }}>✂️ Cuttime</h1>
-        <p style={{ fontSize: "1.25rem", color: "#9AD8FF", marginTop: "0.5rem" }}>
-          Smart queues for barbers & customers
-        </p>
-      </header>
+     <header style={{ marginBottom: "3rem", textAlign: "center" }}>
+  <img
+    src="/logo.svg"   // change to "/logo.png" if that's your file
+    alt="Cuttime"
+    style={{
+      height: 64,
+      width: "auto",
+      display: "block",
+      margin: "0 auto 0.5rem"
+    }}
+  />
+  <p style={{ fontSize: "1.1rem", color: "#9AD8FF", marginTop: "0.5rem" }}>
+    Smart queues for barbers & customers
+  </p>
+</header>
+
 
       {/* Main content */}
       <main style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
