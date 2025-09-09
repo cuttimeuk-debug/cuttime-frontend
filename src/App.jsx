@@ -12,7 +12,7 @@ function CuttimeStarterApp() {
       {/* Header */}
      <header style={{ marginBottom: "3rem", textAlign: "center" }}>
   <img
-    src="/logo.svg"   // change to "/logo.png" if that's your file
+    src="/logo.png"   // change to "/logo.png" if that's your file
     alt="Cuttime"
     style={{
       height: 64,
