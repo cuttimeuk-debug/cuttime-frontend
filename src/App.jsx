@@ -411,44 +411,53 @@ function Dashboard({ auth, onSubscribe }) {
   );
 }
 function CustomerPreview() {
-  const rows = [
-    { name: "Barber 1", waiting: 0, total: 0, off: false },
-    { name: "Barber 2", waiting: 2, total: 50, off: false },
-    { name: "Barber 3", waiting: 0, total: 0, off: true },
-  ];
+  const [queue, setQueue] = useState([]);
+  const [dayOff, setDayOff] = useState(false);
+
+  // Load from localStorage when page opens
+  useEffect(() => {
+    const saved = localStorage.getItem("ct_queue");
+    const off = localStorage.getItem("ct_dayOff");
+    if (saved) setQueue(JSON.parse(saved));
+    if (off) setDayOff(off === "true");
+  }, []);
+
+  // Work out total minutes & next available time
+  const totalMins = queue.reduce((sum, c) => sum + c.mins, 0);
+  const nextAvailable = new Date(Date.now() + totalMins * 60000)
+    .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
   return (
     <section style={styles.customer}>
       <h2 style={styles.h2}>Live Queue</h2>
-      <div style={{ display: "grid", gap: 12 }}>
-        {rows.map((b, i) => (
-          <div
-            key={i}
-            style={{ ...styles.row, opacity: b.off ? 0.6 : 1 }}
-          >
-            <div style={styles.rowLeft}>{b.name}</div>
-            <div style={styles.rowMid}>
-              {b.waiting} waiting{" "}
-              {b.waiting ? (
-                <span style={{ color: "#9AD8FF" }}> · ~{b.total} mins</span>
-              ) : null}
+      <div style={{ marginTop: 12, padding: 14, border: "1px solid rgba(86,204,242,0.2)", borderRadius: 12 }}>
+        {dayOff ? (
+          <span style={badge("#FCA5A5", "#7F1D1D")}>Off today</span>
+        ) : queue.length === 0 ? (
+          <span style={badge("#A7F3D0", "#064E3B")}>Available now</span>
+        ) : (
+          <>
+            <div style={{ marginBottom: 8, color: "#E6F7FF" }}>
+              {queue.length} waiting · ~{totalMins} mins
             </div>
-            <div style={styles.rowRight}>
-              {b.off ? (
-                <span style={badge("#FCA5A5", "#7F1D1D")}>Off today</span>
-              ) : b.waiting === 0 ? (
-                <span style={badge("#A7F3D0", "#064E3B")}>
-                  Available now
-                </span>
-              ) : (
-                <span>Next: 14:30</span>
-              )}
-            </div>
-          </div>
-        ))}
+            <div style={{ color: "#9AD8FF" }}>Next available: {nextAvailable}</div>
+          </>
+        )}
       </div>
+
+      {queue.length > 0 && (
+        <ul style={{ marginTop: 14, paddingLeft: 20, color: "#E6F7FF" }}>
+          {queue.map((c, i) => (
+            <li key={c.id}>
+              {i + 1}. {c.label} – {c.mins} mins
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
+
 
 function Footer() {
   return (
@@ -656,4 +665,3 @@ function badge(bg, fg) {
     fontWeight: 800,
   };
 }
-
